@@ -159,7 +159,7 @@ public class SpecialCounterPlugin extends Plugin
 
 	@Inject
 	private PlayerInfoDropOverlay playerInfoDropOverlay;
-
+//test
 	@Inject
 	@Named("developerMode")
 	boolean developerMode;
