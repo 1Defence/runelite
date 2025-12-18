@@ -790,6 +790,41 @@ public class ClientUI
 				bestGc = gc;
 			}
 		}
+		//overlap is partial, ensure titlebar within bounds of any other display and shift it otherwise.
+		if (bestGc != null)
+		{
+			Rectangle bestGcBounds = bestGc.getBounds();
+			Rectangle titleBounds = new Rectangle(bounds.x, bounds.y, bounds.width, content.getBounds().y);
+			//client was part of a valid display
+			//need to account for the situation in which the title bar is off screen and there is no display above.
+			for (GraphicsDevice gd : gds)
+			{
+				GraphicsConfiguration gc = gd.getDefaultConfiguration();
+				if (gc == bestGc)
+				{
+					continue;
+				}
+
+				final Rectangle displayBounds = gc.getBounds();
+				if (displayBounds.y > bestGcBounds.y)
+				{
+					continue;
+				}
+
+				Rectangle intersection = displayBounds.intersection(titleBounds);
+
+				//title not within display
+				if (intersection.width <= 0 || intersection.height <= 0)
+				{
+					continue;
+				}
+
+				//title bar within a valid display no shift needed
+				return bestGc;
+			}
+			//no valid display found for titlebar, title is deemed to be oob
+			frame.setLocation(frame.getX(), bestGcBounds.y);
+		}
 		return bestGc;
 	}
 
